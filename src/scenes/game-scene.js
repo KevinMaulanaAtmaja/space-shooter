@@ -2,6 +2,8 @@ import Phaser from '../lib/phaser.js';
 import { Player } from '../objects/player.js';
 
 export class GameScene extends Phaser.Scene {
+  // #cursorKeys;
+
   constructor() {
     super({ key: 'GameScene' });
   }
@@ -21,7 +23,13 @@ export class GameScene extends Phaser.Scene {
     // this.add.sprite(100, 100, 'ship').play('explosion');
 
     const player = new Player(this);
+    // this.#cursorKeys = this.input.keyboard.createCursorKeys();
   }
+
+  // update(){
+  //   console.log(this.#cursorKeys.up.isDown, this.#cursorKeys.down.isDown, this.#cursorKeys.left.isDown, this.#cursorKeys.right.isDown);
+    
+  // }
 }
 
 // boot => preload => game

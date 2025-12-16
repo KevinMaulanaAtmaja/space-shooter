@@ -4,8 +4,6 @@
 
 A fun arcade space shooter built with [Phaser 3](https://github.com/photonstorm/phaser)!
 
-This is the official code repository for the [Phaser 3 Game Tutorial - Space Shooter](https://www.youtube.com/playlist?list=PLmcXe0-sfoShHpVWLDW2gqsyH1UFRni_2) series available on YouTube.
-
 ## Demo
 
 You can find a playable demo of the game on Itch.io here: [Demo](https://galemius.itch.io/phaser-3-space-shooter)
@@ -43,11 +41,3 @@ This project would have not been possible without the use of some awesome assets
 | Enemy ships      | Foozle  | [Void Fleet Pack](https://foozlecc.itch.io/void-fleet-pack-1)           |
 | Sound Effects    | Ansimuz | [Warped Space Shooter](https://ansimuz.itch.io/warped-space-shooter)    |
 | Space Background | Piiixl  | [Space Background](https://piiixl.itch.io/space)                        |
-
-## Issues
-
-For any issues you encounter, please open a new [GitHub Issue](https://github.com/devshareacademy/monster-tamer/issues) on this project.
-
-## Questions, Comments, and Suggestions
-
-If you have any questions, comments, or suggestions for future content, please feel free to open a new [GitHub Discussion](https://github.com/devshareacademy/phaser-3-spacer-shooter/discussions) on this project.

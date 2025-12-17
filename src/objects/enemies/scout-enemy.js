@@ -1,3 +1,5 @@
+import { ColliderComponent } from '../../components/collider/collider-component.js';
+import { HealthComponent } from '../../components/health/health-component.js';
 import { BotScoutInputComponent } from "../../components/input/bot-scout-input-component.js";
 import { VerticalMovementComponent } from "../../components/movement/vertical-movement-component.js";
 import { HorizontalMovementComponent } from "../../components/movement/horizontal-movement-component.js";
@@ -7,6 +9,8 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
     #inputComponent;
     #verticalMovementComponent;
     #horizontalMovementComponent;
+    #colliderComponent;
+    #healthComponent;
     #shipSprite
     #shipEngineSprite
 
@@ -26,6 +30,8 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
         this.#inputComponent = new BotScoutInputComponent(this);
         this.#verticalMovementComponent = new VerticalMovementComponent(this, this.#inputComponent, CONFIG.ENEMY_SCOUT_MOVEMENT_VERTICAL_VELOCITY);
         this.#horizontalMovementComponent = new HorizontalMovementComponent(this, this.#inputComponent, CONFIG.ENEMY_SCOUT_MOVEMENT_HORIZONTAL_VELOCITY);
+        this.#healthComponent = new HealthComponent(CONFIG.ENEMY_SCOUT_HEALTH);
+        this.#colliderComponent = new ColliderComponent(this.#healthComponent);
 
         this.scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this);
         this.once(Phaser.GameObjects.Events.DESTROY, ()  => {
@@ -33,8 +39,23 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
         }, this);
     }
 
+    get colliderComponent() {
+        return this.#colliderComponent;
+    }
+
+    get healthComponent() {
+        return this.#healthComponent;
+    }
+
     update(ts, dt){
         // console.log(ts, dt);
+        if(!this.active){
+            return;
+        }
+        if (this.#healthComponent.isDead) {
+            this.setActive(false);
+            this.setVisible(false);
+        }
         this.#inputComponent.update();
         this.#verticalMovementComponent.update();
         this.#horizontalMovementComponent.update();

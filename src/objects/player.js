@@ -1,11 +1,13 @@
 import { KeyboardInputComponent } from '../components/input/keyboard-input-component.js';
 import { HorizontalMovementComponent } from '../components/movement/horizontal-movement-component.js';
+import { VerticalMovementComponent } from '../components/movement/vertical-movement-component.js';
 import * as CONFIG from "../config.js";
 
 
 export class Player extends Phaser.GameObjects.Container {
     #keyboardInputComponent;
     #horizontalMovementComponent;
+    #verticalMovementComponent;
     #shipSprite
     #shipEngineSprite
     #shipEngineThrusterSprite
@@ -28,6 +30,7 @@ export class Player extends Phaser.GameObjects.Container {
 
         this.#keyboardInputComponent = new KeyboardInputComponent(this.scene);
         this.#horizontalMovementComponent = new HorizontalMovementComponent(this, this.#keyboardInputComponent, CONFIG.PLAYER_MOVEMENT_HORIZONTAL_VELOCITY);
+        this.#verticalMovementComponent = new VerticalMovementComponent(this, this.#keyboardInputComponent, CONFIG.PLAYER_MOVEMENT_VERTICAL_VELOCITY);
 
         this.scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this);
         this.once(Phaser.GameObjects.Events.DESTROY, ()  => {
@@ -39,6 +42,7 @@ export class Player extends Phaser.GameObjects.Container {
         // console.log(ts, dt);
         this.#keyboardInputComponent.update();
         this.#horizontalMovementComponent.update();
+        this.#verticalMovementComponent.update();
         // console.log(this.#keyboardInputComponent.downIsDown);
     }
 }

@@ -12,6 +12,9 @@ export class InputComponent {
     get downIsDown() {
         return this._down;
     }
+    get upIsDown() {
+        return this._up;
+    }
     get leftIsDown() {
         return this._left;
     }

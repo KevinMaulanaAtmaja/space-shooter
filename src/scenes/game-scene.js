@@ -1,4 +1,6 @@
 import Phaser from '../lib/phaser.js';
+import { FighterEnemy } from '../objects/enemies/fighter-enemy.js';
+import { ScoutEnemy } from '../objects/enemies/scout-enemy.js';
 import { Player } from '../objects/player.js';
 
 export class GameScene extends Phaser.Scene {
@@ -23,6 +25,8 @@ export class GameScene extends Phaser.Scene {
     // this.add.sprite(100, 100, 'ship').play('explosion');
 
     const player = new Player(this);
+    const scoutEnemy = new ScoutEnemy(this, this.scale.width / 2, 0);
+    const fighterEnemy = new FighterEnemy(this, this.scale.width / 2, 0);
     // this.#cursorKeys = this.input.keyboard.createCursorKeys();
   }
 

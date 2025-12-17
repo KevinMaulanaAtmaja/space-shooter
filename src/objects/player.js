@@ -1,6 +1,7 @@
 import { KeyboardInputComponent } from '../components/input/keyboard-input-component.js';
 import { HorizontalMovementComponent } from '../components/movement/horizontal-movement-component.js';
 import { VerticalMovementComponent } from '../components/movement/vertical-movement-component.js';
+import { WeaponComponent } from '../components/weapon/weapon-component.js';
 import * as CONFIG from "../config.js";
 
 
@@ -8,9 +9,10 @@ export class Player extends Phaser.GameObjects.Container {
     #keyboardInputComponent;
     #horizontalMovementComponent;
     #verticalMovementComponent;
-    #shipSprite
-    #shipEngineSprite
-    #shipEngineThrusterSprite
+    #weaponComponent;
+    #shipSprite;
+    #shipEngineSprite;
+    #shipEngineThrusterSprite;
 
     constructor(scene) {
         super(scene, scene.scale.width / 2, scene.scale.height - 32, []);
@@ -31,6 +33,14 @@ export class Player extends Phaser.GameObjects.Container {
         this.#keyboardInputComponent = new KeyboardInputComponent(this.scene);
         this.#horizontalMovementComponent = new HorizontalMovementComponent(this, this.#keyboardInputComponent, CONFIG.PLAYER_MOVEMENT_HORIZONTAL_VELOCITY);
         this.#verticalMovementComponent = new VerticalMovementComponent(this, this.#keyboardInputComponent, CONFIG.PLAYER_MOVEMENT_VERTICAL_VELOCITY);
+        this.#weaponComponent = new WeaponComponent(this, this.#keyboardInputComponent, {
+            speed: CONFIG.PLAYER_BULLET_SPEED,
+            interval: CONFIG.PLAYER_BULLET_INTERVAL,
+            lifespan: CONFIG.PLAYER_BULLET_LIFESPAN,
+            maxCount: CONFIG.PLAYER_BULLET_MAX_COUNT,
+            yOffset: -20,
+            flipY: false,
+        })
 
         this.scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this);
         this.once(Phaser.GameObjects.Events.DESTROY, ()  => {
@@ -43,6 +53,7 @@ export class Player extends Phaser.GameObjects.Container {
         this.#keyboardInputComponent.update();
         this.#horizontalMovementComponent.update();
         this.#verticalMovementComponent.update();
+        this.#weaponComponent.update(dt);
         // console.log(this.#keyboardInputComponent.downIsDown);
     }
 }

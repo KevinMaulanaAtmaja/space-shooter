@@ -4,19 +4,23 @@ import { BotScoutInputComponent } from "../../components/input/bot-scout-input-c
 import { VerticalMovementComponent } from "../../components/movement/vertical-movement-component.js";
 import { HorizontalMovementComponent } from "../../components/movement/horizontal-movement-component.js";
 import * as CONFIG from "../../config.js";
+import { CUSTOM_EVENT } from '../../components/events/event-bus-component.js';
 
 export class ScoutEnemy extends Phaser.GameObjects.Container {
+    #isInitialized;
     #inputComponent;
     #verticalMovementComponent;
     #horizontalMovementComponent;
     #colliderComponent;
     #healthComponent;
-    #shipSprite
-    #shipEngineSprite
+    #eventBusComponent;
+    #shipSprite;
+    #shipEngineSprite;
 
     constructor(scene, x, y) {
         super(scene, x, y, []);
 
+        this.#isInitialized = false;
         this.#shipSprite = scene.add.sprite(0, 0, 'scout', 0);
         this.#shipEngineSprite = scene.add.sprite(0, 0, 'scout_engine').setFlipY(true);
         this.#shipEngineSprite.play('scout_engine');
@@ -26,12 +30,6 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
         this.scene.physics.add.existing(this);
         this.body.setSize(24, 24);
         this.body.setOffset(-12, -12);
-
-        this.#inputComponent = new BotScoutInputComponent(this);
-        this.#verticalMovementComponent = new VerticalMovementComponent(this, this.#inputComponent, CONFIG.ENEMY_SCOUT_MOVEMENT_VERTICAL_VELOCITY);
-        this.#horizontalMovementComponent = new HorizontalMovementComponent(this, this.#inputComponent, CONFIG.ENEMY_SCOUT_MOVEMENT_HORIZONTAL_VELOCITY);
-        this.#healthComponent = new HealthComponent(CONFIG.ENEMY_SCOUT_HEALTH);
-        this.#colliderComponent = new ColliderComponent(this.#healthComponent);
 
         this.scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this);
         this.once(Phaser.GameObjects.Events.DESTROY, ()  => {
@@ -47,8 +45,31 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
         return this.#healthComponent;
     }
 
+    init(eventBusComponent){
+        this.#eventBusComponent = eventBusComponent;
+        this.#inputComponent = new BotScoutInputComponent(this);
+        this.#verticalMovementComponent = new VerticalMovementComponent(this, this.#inputComponent, CONFIG.ENEMY_SCOUT_MOVEMENT_VERTICAL_VELOCITY);
+        this.#horizontalMovementComponent = new HorizontalMovementComponent(this, this.#inputComponent, CONFIG.ENEMY_SCOUT_MOVEMENT_HORIZONTAL_VELOCITY);
+        this.#healthComponent = new HealthComponent(CONFIG.ENEMY_SCOUT_HEALTH);
+        this.#colliderComponent = new ColliderComponent(this.#healthComponent);
+        this.#eventBusComponent.emit(CUSTOM_EVENT.ENEMY_INIT, this);
+        this.#isInitialized = true;
+    }
+
+    reset(){
+        this.setActive(true);
+        this.setVisible(true);
+        this.#healthComponent.reset();
+        this.#inputComponent.startX = this.x;
+        this.#verticalMovementComponent.reset();
+        this.#horizontalMovementComponent.reset();
+    }
+
     update(ts, dt){
         // console.log(ts, dt);
+        if(!this.#isInitialized){
+            return;
+        }
         if(!this.active){
             return;
         }

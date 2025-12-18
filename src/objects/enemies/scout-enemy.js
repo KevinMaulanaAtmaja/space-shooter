@@ -4,7 +4,7 @@ import { BotScoutInputComponent } from "../../components/input/bot-scout-input-c
 import { VerticalMovementComponent } from "../../components/movement/vertical-movement-component.js";
 import { HorizontalMovementComponent } from "../../components/movement/horizontal-movement-component.js";
 import * as CONFIG from "../../config.js";
-import { CUSTOM_EVENT } from '../../components/events/event-bus-component.js';
+import { CUSTOM_EVENTS } from '../../components/events/event-bus-component.js';
 
 export class ScoutEnemy extends Phaser.GameObjects.Container {
     #isInitialized;
@@ -59,7 +59,7 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
         this.#horizontalMovementComponent = new HorizontalMovementComponent(this, this.#inputComponent, CONFIG.ENEMY_SCOUT_MOVEMENT_HORIZONTAL_VELOCITY);
         this.#healthComponent = new HealthComponent(CONFIG.ENEMY_SCOUT_HEALTH);
         this.#colliderComponent = new ColliderComponent(this.#healthComponent);
-        this.#eventBusComponent.emit(CUSTOM_EVENT.ENEMY_INIT, this);
+        this.#eventBusComponent.emit(CUSTOM_EVENTS.ENEMY_INIT, this);
         this.#isInitialized = true;
     }
 
@@ -83,7 +83,7 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
         if (this.#healthComponent.isDead) {
             this.setActive(false);
             this.setVisible(false);
-            this.#eventBusComponent.emit(CUSTOM_EVENT.ENEMY_DESTROYED, this);
+            this.#eventBusComponent.emit(CUSTOM_EVENTS.ENEMY_DESTROYED, this);
         }
         this.#inputComponent.update();
         this.#verticalMovementComponent.update();

@@ -1,8 +1,11 @@
+import { CUSTOM_EVENTS } from "../events/event-bus-component.js";
+
 export class EnemySpawnerComponent {
     #scene;
     #spawnInterval;
     #spawnAt;
     #group;
+    #disableSpawning;
 
     constructor(scene, enemyClass, spawnConfig, eventBusComponent){
         this.#scene = scene;
@@ -19,6 +22,7 @@ export class EnemySpawnerComponent {
 
         this.#spawnInterval = spawnConfig.interval;
         this.#spawnAt = spawnConfig.spawnAt;
+        this.#disableSpawning = false;
 
         this.#scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this);
         this.#scene.physics.world.on(Phaser.Physics.Arcade.Events.WORLD_STEP, this.worldStep, this);
@@ -26,6 +30,9 @@ export class EnemySpawnerComponent {
             this.#scene.events.off(Phaser.Scenes.Events.UPDATE, this.update, this);
             this.#scene.physics.world.off(Phaser.Physics.Arcade.Events.WORLD_STEP, this.worldStep, this);
         }, this);
+        eventBusComponent.on(CUSTOM_EVENTS.GAME_OVER, () => {
+            this.#disableSpawning = true;
+        });
     }
 
     get phaserGroup(){
@@ -33,6 +40,10 @@ export class EnemySpawnerComponent {
     }
 
     update(ts, dt){
+        if(this.#disableSpawning){
+            return;
+        }
+
         this.#spawnAt -= dt;
         if(this.#spawnAt > 0){
             return;

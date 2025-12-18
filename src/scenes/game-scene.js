@@ -1,12 +1,14 @@
 // @ts-nocheck
 import { EnemySpawnerComponent } from '../components/spawners/enemy-spawner-component.js';
-import { CUSTOM_EVENT, EnemyBusComponent } from '../components/events/event-bus-component.js';
+import { CUSTOM_EVENTS, EnemyBusComponent } from '../components/events/event-bus-component.js';
 import Phaser from '../lib/phaser.js';
 import { FighterEnemy } from '../objects/enemies/fighter-enemy.js';
 import { ScoutEnemy } from '../objects/enemies/scout-enemy.js';
 import { Player } from '../objects/player.js';
 import * as CONFIG from '../config.js';
 import { EnemyDestroyedComponent } from '../components/spawners/enemy-destroyed-component.js';
+import { Score } from '../objects/ui/score.js';
+import { Lives } from '../objects/ui/lives.js';
 
 export class GameScene extends Phaser.Scene {
   // #cursorKeys;
@@ -21,7 +23,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.add.sprite(0, 0, 'bg1', 0).setOrigin(0, 1).setAlpha(0.7).setAngle(90).setScale(1, 1.25).play('bg1');
+    this.add.sprite(0, 0, 'bg2', 0).setOrigin(0, 1).setAlpha(0.7).setAngle(90).setScale(1, 1.25).play('bg2');
+    this.add.sprite(0, 0, 'bg3', 0).setOrigin(0, 1).setAlpha(0.7).setAngle(90).setScale(1, 1.25).play('bg3');
+
     const eventBusComponent = new EnemyBusComponent();
+    const player = new Player(this, eventBusComponent);
 
     const scoutSpawner = new EnemySpawnerComponent(this, ScoutEnemy, {
       interval: CONFIG.ENEMY_SCOUT_GROUP_SPAWN_INTERVAL,
@@ -34,7 +41,6 @@ export class GameScene extends Phaser.Scene {
 
     new EnemyDestroyedComponent(this, eventBusComponent);
 
-    const player = new Player(this);
     // const scoutEnemy = new ScoutEnemy(this, this.scale.width / 2, 0);
     // const fighterEnemy = new FighterEnemy(this, this.scale.width / 2, 0);
 
@@ -49,7 +55,7 @@ export class GameScene extends Phaser.Scene {
       enemyGameObject.colliderComponent.collideWithEnemyShip();
     });
     
-    eventBusComponent.on(CUSTOM_EVENT.ENEMY_INIT, (gameObject) => {
+    eventBusComponent.on(CUSTOM_EVENTS.ENEMY_INIT, (gameObject) => {
       if (gameObject.constructor.name !== 'FighterEnemy') {
         return;
       }
@@ -61,7 +67,20 @@ export class GameScene extends Phaser.Scene {
         gameObject.weaponComponent.destroyBullet(projectileGameObject);
         playerGameObject.colliderComponent.collideWithEnemyProjectile();
     });
-    })
+
+    this.physics.add.overlap(
+    player.weaponGameObjectGroup,
+    gameObject.weaponGameObjectGroup,
+    (playerBullet, enemyBullet) => {
+      if (!playerBullet.active || !enemyBullet.active) {
+        return;
+      }
+
+      player.weaponComponent.destroyBullet(playerBullet);
+      gameObject.weaponComponent.destroyBullet(enemyBullet);
+    }
+  );
+    });
     
     this.physics.add.overlap(scoutSpawner.phaserGroup, player.weaponGameObjectGroup, (enemyGameObject, projectileGameObject) => {
       // console.log(enemyGameObject, projectileGameObject);
@@ -97,8 +116,9 @@ export class GameScene extends Phaser.Scene {
 
       player.weaponComponent.destroyBullet(projectileGameObject);
       enemyGameObject.colliderComponent.collideWithEnemyProjectile();
-    });
-    // this.#cursorKeys = this.input.keyboard.createCursorKeys();
+    });    
+    new Score(this, eventBusComponent);
+    new Lives(this, eventBusComponent);
   }
 }
 

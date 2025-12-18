@@ -6,7 +6,7 @@ import { BotFighterInputComponent } from "../../components/input/bot-fighter-inp
 import { VerticalMovementComponent } from "../../components/movement/vertical-movement-component.js";
 import { WeaponComponent } from "../../components/weapon/weapon-component.js";
 import * as CONFIG from "../../config.js";
-import { CUSTOM_EVENT } from '../../components/events/event-bus-component.js';
+import { CUSTOM_EVENTS } from '../../components/events/event-bus-component.js';
 
 export class FighterEnemy extends Phaser.GameObjects.Container {
     #isInitialized;
@@ -81,7 +81,7 @@ export class FighterEnemy extends Phaser.GameObjects.Container {
         });
         this.#healthComponent = new HealthComponent(CONFIG.ENEMY_FIGHTER_HEALTH);
         this.#colliderComponent = new ColliderComponent(this.#healthComponent);
-        this.#eventBusComponent.emit(CUSTOM_EVENT.ENEMY_INIT, this);
+        this.#eventBusComponent.emit(CUSTOM_EVENTS.ENEMY_INIT, this);
         this.#isInitialized = true;
     }
 
@@ -102,7 +102,7 @@ export class FighterEnemy extends Phaser.GameObjects.Container {
         if (this.#healthComponent.isDead) {
             this.setActive(false);
             this.setVisible(false);
-            this.#eventBusComponent.emit(CUSTOM_EVENT.ENEMY_DESTROYED, this);
+            this.#eventBusComponent.emit(CUSTOM_EVENTS.ENEMY_DESTROYED, this);
         }
         // console.log(ts, dt);
         this.#inputComponent.update();

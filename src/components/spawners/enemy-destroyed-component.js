@@ -1,4 +1,4 @@
-import { CUSTOM_EVENT } from "../events/event-bus-component.js";
+import { CUSTOM_EVENTS } from "../events/event-bus-component.js";
 
 export class EnemyDestroyedComponent {
     #scene;
@@ -13,7 +13,7 @@ export class EnemyDestroyedComponent {
             name: `${this.constructor.name}-${Phaser.Math.RND.uuid()}`,
         });
 
-        this.#eventBusComponent.on(CUSTOM_EVENT.ENEMY_DESTROYED, (enemy) => {
+        this.#eventBusComponent.on(CUSTOM_EVENTS.ENEMY_DESTROYED, (enemy) => {
             const gameObject = this.#group.get(enemy.x, enemy.y, enemy.shipAssetKey, 0);
             gameObject.play({
                 key: enemy.shipDestroyedAnimationKey,

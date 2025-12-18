@@ -1,3 +1,4 @@
+import { CUSTOM_EVENTS } from "../events/event-bus-component.js";
 
 export class WeaponComponent {
     #gameObject;
@@ -5,11 +6,13 @@ export class WeaponComponent {
     #bulletConfig;
     #bulletGroup;
     #fireBulletInterval;
+    #eventBusComponent;
 
-    constructor(gameObject, inputComponent, bulletConfig) {
+    constructor(gameObject, inputComponent, bulletConfig, eventBusComponent) {
         this.#gameObject = gameObject;
         this.#inputComponent = inputComponent;
         this.#bulletConfig = bulletConfig;
+        this.#eventBusComponent = eventBusComponent;
         this.#fireBulletInterval = 0;
 
         this.#bulletGroup = this.#gameObject.scene.physics.add.group({
@@ -49,13 +52,14 @@ export class WeaponComponent {
             const x = this.#gameObject.x;
             const y = this.#gameObject.y + this.#bulletConfig.yOffset;
             bullet.enableBody(true, x, y, true, true);
+            bullet.body.velocity.y -= this.#bulletConfig.speed;
             bullet.setState(this.#bulletConfig.lifespan);
             bullet.play('bullet');
             bullet.setScale(0.5);
             bullet.body.setSize(14, 18);
             bullet.setFlipY(this.#bulletConfig.flipY);
             
-            bullet.body.velocity.y -= this.#bulletConfig.speed;
+            this.#eventBusComponent.emit(CUSTOM_EVENTS.SHIP_SHOOT);
             this.#fireBulletInterval = this.#bulletConfig.interval;
         }
     }

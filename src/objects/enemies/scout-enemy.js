@@ -44,6 +44,13 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
     get healthComponent() {
         return this.#healthComponent;
     }
+        get shipAssetKey(){
+        return 'scout';
+    }
+
+    get shipDestroyedAnimationKey(){
+        return 'scout_destroy';
+    }
 
     init(eventBusComponent){
         this.#eventBusComponent = eventBusComponent;
@@ -76,6 +83,7 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
         if (this.#healthComponent.isDead) {
             this.setActive(false);
             this.setVisible(false);
+            this.#eventBusComponent.emit(CUSTOM_EVENT.ENEMY_DESTROYED, this);
         }
         this.#inputComponent.update();
         this.#verticalMovementComponent.update();

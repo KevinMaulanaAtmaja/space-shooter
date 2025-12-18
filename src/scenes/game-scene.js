@@ -6,6 +6,7 @@ import { FighterEnemy } from '../objects/enemies/fighter-enemy.js';
 import { ScoutEnemy } from '../objects/enemies/scout-enemy.js';
 import { Player } from '../objects/player.js';
 import * as CONFIG from '../config.js';
+import { EnemyDestroyedComponent } from '../components/spawners/enemy-destroyed-component.js';
 
 export class GameScene extends Phaser.Scene {
   // #cursorKeys;
@@ -31,6 +32,8 @@ export class GameScene extends Phaser.Scene {
       spawnAt: CONFIG.ENEMY_FIGHTER_GROUP_SPAWN_START
     }, eventBusComponent);
 
+    new EnemyDestroyedComponent(this, eventBusComponent);
+
     const player = new Player(this);
     // const scoutEnemy = new ScoutEnemy(this, this.scale.width / 2, 0);
     // const fighterEnemy = new FighterEnemy(this, this.scale.width / 2, 0);
@@ -38,6 +41,10 @@ export class GameScene extends Phaser.Scene {
     // scout
     this.physics.add.overlap(player, scoutSpawner.phaserGroup, (playerGameObject, enemyGameObject) => {
       // console.log('player hit by enemy bullet');
+      if (!playerGameObject.active || !enemyGameObject.active) {
+        return;
+      }
+
       playerGameObject.colliderComponent.collideWithEnemyShip();
       enemyGameObject.colliderComponent.collideWithEnemyShip();
     });
@@ -47,6 +54,10 @@ export class GameScene extends Phaser.Scene {
         return;
       }
       this.physics.add.overlap(player, gameObject.weaponGameObjectGroup, (playerGameObject, projectileGameObject) => {
+        if (!playerGameObject.active || !projectileGameObject.active) {
+        return;
+      }
+
         gameObject.weaponComponent.destroyBullet(projectileGameObject);
         playerGameObject.colliderComponent.collideWithEnemyProjectile();
     });
@@ -54,6 +65,10 @@ export class GameScene extends Phaser.Scene {
     
     this.physics.add.overlap(scoutSpawner.phaserGroup, player.weaponGameObjectGroup, (enemyGameObject, projectileGameObject) => {
       // console.log(enemyGameObject, projectileGameObject);
+      if (!enemyGameObject.active || !projectileGameObject.active) {
+        return;
+      }
+
       player.weaponComponent.destroyBullet(projectileGameObject);
       enemyGameObject.colliderComponent.collideWithEnemyProjectile();
     });
@@ -61,6 +76,10 @@ export class GameScene extends Phaser.Scene {
     // fighter
     this.physics.add.overlap(player, fighterSpawner.phaserGroup, (playerGameObject, enemyGameObject) => {
       // console.log('player hit by enemy bullet');
+      if (!playerGameObject.active || !enemyGameObject.active) {
+        return;
+      }
+
       playerGameObject.colliderComponent.collideWithEnemyShip();
       enemyGameObject.colliderComponent.collideWithEnemyShip();
     });
@@ -72,6 +91,10 @@ export class GameScene extends Phaser.Scene {
     
     this.physics.add.overlap(fighterSpawner.phaserGroup, player.weaponGameObjectGroup, (enemyGameObject, projectileGameObject) => {
       // console.log(enemyGameObject, projectileGameObject);
+      if (!enemyGameObject.active || !projectileGameObject.active) {
+        return;
+      }
+
       player.weaponComponent.destroyBullet(projectileGameObject);
       enemyGameObject.colliderComponent.collideWithEnemyProjectile();
     });

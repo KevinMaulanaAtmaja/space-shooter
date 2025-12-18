@@ -59,6 +59,14 @@ export class FighterEnemy extends Phaser.GameObjects.Container {
         return this.#colliderComponent;
     }
 
+    get shipAssetKey(){
+        return 'fighter';
+    }
+
+    get shipDestroyedAnimationKey(){
+        return 'fighter_destroy';
+    }
+
     init(eventBusComponent){
         this.#eventBusComponent = eventBusComponent;
         this.#inputComponent = new BotFighterInputComponent();
@@ -94,6 +102,7 @@ export class FighterEnemy extends Phaser.GameObjects.Container {
         if (this.#healthComponent.isDead) {
             this.setActive(false);
             this.setVisible(false);
+            this.#eventBusComponent.emit(CUSTOM_EVENT.ENEMY_DESTROYED, this);
         }
         // console.log(ts, dt);
         this.#inputComponent.update();
